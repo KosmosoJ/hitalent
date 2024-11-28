@@ -3,7 +3,6 @@ import os
 import json
 from datetime import datetime, timedelta
 
-
 class Task:
     def __init__(
         self,
@@ -68,15 +67,13 @@ class TaskManager:
             json.dump([], file)
 
     def list_tasks(self):
+        data = [
+            ['ID', 'Задача', 'Описание',  'Категория',  'Срок выполнения', 'Приоритет', 'Статус']
+        ]
         if len(self.tasks) > 0:
-            print("\tСписок задач")
-            print(
-                """ID Задача \t Описание \t Категория \t Срок выполнения Приоритет \t Статус"""
-            )
             for task in self.tasks:
-                print(
-                    f"{task.task_id}. {task.title}\t{task.description} \t {task.category} \t {task.due_date} \t {task.priority} \t {task.status}"
-                )
+                data.append([task.task_id,task.title,task.description,task.category,task.due_date,task.priority,task.status])
+            pretty_print(data)
         else:
             print([])
 
@@ -118,7 +115,54 @@ class TaskManager:
         )
         self.tasks.append(task)
         self.save_tasks()
+        print(f'Задача "{task.title}" успешно создана')
+    
+    def delete_task(self, task_id):
+        for i, task in enumerate(self.tasks):
+            if task.task_id == task_id:
+                print(f'Задача {task.title} удалена')
+                del self.tasks[i]
+                self.save_tasks()
+                return
+        print(f'Задача с ID {task_id} не найдена')
+        
+    def get_task_by_id(self, task_id):
+        data = [
+            ['ID', 'Задача', 'Описание',  'Категория',  'Срок выполнения', 'Приоритет', 'Статус']
+        ]
+        for task in self.tasks:
+            if task.task_id == task_id:
 
+                data.append([task.task_id,task.title,task.description,task.category,task.due_date,task.priority,task.status])
+                pretty_print(data)
+                return
+        print(f'Задача с ID{task_id} не найдена.')
+    
+    def get_tasks_by_category(self, category):
+        data = [
+            ['ID', 'Задача', 'Описание',  'Категория',  'Срок выполнения', 'Приоритет', 'Статус']
+        ]
+        for task in self.tasks:
+            if task.category == category.lower():
+                data.append([task.task_id,task.title,task.description,task.category,task.due_date,task.priority,task.status])
+        if len(data) == 0:
+            print('Ничего не найдено.')
+            return
+        pretty_print(data)
+        
+        
+                
+        
+def pretty_print(data):
+    longest_cols = [
+        (max([len(str(row[i])) for row in data]) + 3)
+        for i in range(len(data[0]))
+    ]
+    row_format = "".join(["{:>" + str(longest_col) + "}" for longest_col in longest_cols])
+    for row in data:
+        print(row_format.format(*row))
+
+                    
 
 def main(command_line=None):
     parser = argparse.ArgumentParser(
@@ -129,6 +173,8 @@ def main(command_line=None):
 
     # Вывод данных
     list_parser = subparser.add_parser("list", help="Вывод всех задач")
+    list_parser.add_argument('-id', type=int, help='Вывод по айдишнику', default=None)
+    list_parser.add_argument('--category','-c', type=str, help='Вывод по категориям', default=None)
 
     # Ввод данных
     add_parser = subparser.add_parser("add", help="Добавление задачи в список задач")
@@ -177,7 +223,14 @@ def main(command_line=None):
         print("debug" + str(args))
 
     if args.command == "list":
-        manager.list_tasks()
+        if args.id:
+            # manager.get_task_by_id(args.id)
+            manager.get_task_by_id(args.id)
+        elif args.category:
+            manager.get_tasks_by_category(args.category)
+        else:
+            manager.list_tasks()
+        
     if args.command == "add":
         manager.add_task(
             title=args.title,
