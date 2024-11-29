@@ -150,6 +150,24 @@ class TaskManager:
             return
         pretty_print(data)
         
+    def complete_task_by_id(self, task_id):
+        data = [
+            ['ID', 'Задача', 'Описание',  'Категория',  'Срок выполнения', 'Приоритет', 'Статус']
+        ]
+        
+        for task in self.tasks:
+            if task.task_id == task_id:
+                if task.status == 'не выполнено':
+                    task.status = 'выполнено'
+                    self.save_tasks()
+                    data.append([task.task_id,task.title,task.description,task.category,task.due_date,task.priority,task.status])
+                    pretty_print(data)
+                    return
+                print('Задача уже выполнена.')
+                return
+        if len(data) == 1:
+            print(f'Задача с ID {task_id} не найдена.')
+        
         
                 
         
@@ -215,6 +233,14 @@ def main(command_line=None):
         default=None,
     )
 
+    # Завершить задачу
+    complete_parser = subparser.add_parser('complete', help='Завершить задачу')
+    complete_parser.add_argument('-id', help='Айди задачи, которую нужно завершить', type=int)
+    
+    
+    # Редактироваение данных 
+    edit_parser = subparser.add_parser('edit', help='Изменение задачи')
+    edit_parser.add_argument('-id', help='Айди задачи, которую нужно изменить')
     manager = TaskManager()
 
     args = parser.parse_args(command_line)
@@ -232,14 +258,23 @@ def main(command_line=None):
             manager.list_tasks()
         
     if args.command == "add":
-        manager.add_task(
-            title=args.title,
-            description=args.description,
-            category=args.category,
-            due_date=args.deadline,
-            priority=args.priority,
-            status=args.status,
-        )
+        if args.title:
+            manager.add_task(
+                title=args.title,
+                description=args.description,
+                category=args.category,
+                due_date=args.deadline,
+                priority=args.priority,
+                status=args.status,
+            )
+        else:
+            print('Для создания задачи небходимо указать "--title"')
+    
+    if args.command == 'complete':
+        if args.id:
+            manager.complete_task_by_id(args.id)
+        else:
+            print('Необходимо указать ID задачи, которую нужно завершить.')
 
 if __name__ == "__main__":
     main()
