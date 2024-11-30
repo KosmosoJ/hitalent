@@ -1,53 +1,8 @@
-import argparse
 import os
 import json
 from datetime import datetime, timedelta
-
-class Task:
-    def __init__(
-        self,
-        task_id: int,
-        title: str,
-        description: str = "",
-        status: str = "не выполнено",
-        priority: str = "низкий",
-        category: str = "личное",
-        due_date: datetime | str = None,
-    ):
-        self.task_id = task_id
-        self.title = title.lower()
-        self.description = description.lower()
-        self.status = status.lower()
-        self.priority = priority.lower()
-        self.category = category.lower()
-        self.due_date = (
-            due_date.strftime("%Y-%m-%d")
-            if isinstance(due_date, datetime)
-            else due_date
-        )
-
-    def to_dict(self) -> dict:
-        return {
-            "task_id": self.task_id,
-            "title": self.title,
-            "description": self.description,
-            "category": self.category,
-            "due_date": self.due_date,
-            "priority": self.priority,
-            "status": self.status,
-        }
-
-    @classmethod
-    def from_dict(cls, data):
-        return cls(
-            task_id=data["task_id"],
-            title=data["title"],
-            description=data["description"],
-            category=data["category"],
-            due_date=data["due_date"],
-            priority=data["priority"],
-            status=data["status"],
-        )
+from task import Task
+from utils import pretty_print
 
 
 class TaskManager:
@@ -68,11 +23,29 @@ class TaskManager:
 
     def list_tasks(self):
         data = [
-            ['ID', 'Задача', 'Описание',  'Категория',  'Срок выполнения', 'Приоритет', 'Статус']
+            [
+                "ID",
+                "Задача",
+                "Описание",
+                "Категория",
+                "Срок выполнения",
+                "Приоритет",
+                "Статус",
+            ]
         ]
         if len(self.tasks) > 0:
             for task in self.tasks:
-                data.append([task.task_id,task.title,task.description,task.category,task.due_date,task.priority,task.status])
+                data.append(
+                    [
+                        task.task_id,
+                        task.title,
+                        task.description,
+                        task.category,
+                        task.due_date,
+                        task.priority,
+                        task.status,
+                    ]
+                )
             pretty_print(data)
         else:
             print([])
@@ -116,165 +89,107 @@ class TaskManager:
         self.tasks.append(task)
         self.save_tasks()
         print(f'Задача "{task.title}" успешно создана')
-    
+
     def delete_task(self, task_id):
         for i, task in enumerate(self.tasks):
             if task.task_id == task_id:
-                print(f'Задача {task.title} удалена')
+                print(f"Задача {task.title} удалена")
                 del self.tasks[i]
                 self.save_tasks()
                 return
-        print(f'Задача с ID {task_id} не найдена')
-        
+        print(f"Задача с ID {task_id} не найдена")
+
     def get_task_by_id(self, task_id):
         data = [
-            ['ID', 'Задача', 'Описание',  'Категория',  'Срок выполнения', 'Приоритет', 'Статус']
+            [
+                "ID",
+                "Задача",
+                "Описание",
+                "Категория",
+                "Срок выполнения",
+                "Приоритет",
+                "Статус",
+            ]
         ]
         for task in self.tasks:
             if task.task_id == task_id:
-
-                data.append([task.task_id,task.title,task.description,task.category,task.due_date,task.priority,task.status])
+                data.append(
+                    [
+                        task.task_id,
+                        task.title,
+                        task.description,
+                        task.category,
+                        task.due_date,
+                        task.priority,
+                        task.status,
+                    ]
+                )
                 pretty_print(data)
                 return
-        print(f'Задача с ID{task_id} не найдена.')
-    
+        print(f"Задача с ID{task_id} не найдена.")
+
     def get_tasks_by_category(self, category):
         data = [
-            ['ID', 'Задача', 'Описание',  'Категория',  'Срок выполнения', 'Приоритет', 'Статус']
+            [
+                "ID",
+                "Задача",
+                "Описание",
+                "Категория",
+                "Срок выполнения",
+                "Приоритет",
+                "Статус",
+            ]
         ]
         for task in self.tasks:
             if task.category == category.lower():
-                data.append([task.task_id,task.title,task.description,task.category,task.due_date,task.priority,task.status])
+                data.append(
+                    [
+                        task.task_id,
+                        task.title,
+                        task.description,
+                        task.category,
+                        task.due_date,
+                        task.priority,
+                        task.status,
+                    ]
+                )
         if len(data) == 0:
-            print('Ничего не найдено.')
+            print("Ничего не найдено.")
             return
         pretty_print(data)
-        
+
     def complete_task_by_id(self, task_id):
         data = [
-            ['ID', 'Задача', 'Описание',  'Категория',  'Срок выполнения', 'Приоритет', 'Статус']
+            [
+                "ID",
+                "Задача",
+                "Описание",
+                "Категория",
+                "Срок выполнения",
+                "Приоритет",
+                "Статус",
+            ]
         ]
-        
+
         for task in self.tasks:
             if task.task_id == task_id:
-                if task.status == 'не выполнено':
-                    task.status = 'выполнено'
+                if task.status == "не выполнено":
+                    task.status = "выполнено"
                     self.save_tasks()
-                    data.append([task.task_id,task.title,task.description,task.category,task.due_date,task.priority,task.status])
+                    data.append(
+                        [
+                            task.task_id,
+                            task.title,
+                            task.description,
+                            task.category,
+                            task.due_date,
+                            task.priority,
+                            task.status,
+                        ]
+                    )
                     pretty_print(data)
                     return
-                print('Задача уже выполнена.')
+                print("Задача уже выполнена.")
                 return
         if len(data) == 1:
-            print(f'Задача с ID {task_id} не найдена.')
-        
-        
-                
-        
-def pretty_print(data):
-    longest_cols = [
-        (max([len(str(row[i])) for row in data]) + 3)
-        for i in range(len(data[0]))
-    ]
-    row_format = "".join(["{:>" + str(longest_col) + "}" for longest_col in longest_cols])
-    for row in data:
-        print(row_format.format(*row))
-
-                    
-
-def main(command_line=None):
-    parser = argparse.ArgumentParser(
-        prog="Список задач", description="Управление вашим списком задач"
-    )
-    parser.add_argument("--debug", action="store_true", help="Print debug info")
-    subparser = parser.add_subparsers(dest="command")
-
-    # Вывод данных
-    list_parser = subparser.add_parser("list", help="Вывод всех задач")
-    list_parser.add_argument('-id', type=int, help='Вывод по айдишнику', default=None)
-    list_parser.add_argument('--category','-c', type=str, help='Вывод по категориям', default=None)
-
-    # Ввод данных
-    add_parser = subparser.add_parser("add", help="Добавление задачи в список задач")
-    add_parser.add_argument(
-        "--title", "-t", help="Заголовок задачи. Необходимо заполнить"
-    )
-    add_parser.add_argument(
-        "--description",
-        "-d",
-        help="Описание задачи. По умолчанию - пустая строка",
-        default="",
-    )
-    add_parser.add_argument(
-        "--status",
-        "-s",
-        help="Статус задачи. По умолчанию - не выполнено",
-        choices=["не выполнено", "в процессе", "выполнено"],
-        default="не выполнено",
-    )
-    add_parser.add_argument(
-        "--priority",
-        "-p",
-        help="Приоритет задачи. По умолчанию - низкий",
-        choices=["низкий", "средний", "высокий"],
-        default="низкий",
-    )
-    add_parser.add_argument(
-        "--category",
-        "-c",
-        help="Категория задачи. По умолчанию - личное",
-        choices=["обучение", "личное", "работа", "дом"],
-        default="личное",
-    )
-    add_parser.add_argument(
-        "--deadline",
-        "-dl",
-        help="Дедлайн задачи. По умолчанию будет значение - сегодня + 1 день",
-        default=None,
-    )
-
-    # Завершить задачу
-    complete_parser = subparser.add_parser('complete', help='Завершить задачу')
-    complete_parser.add_argument('-id', help='Айди задачи, которую нужно завершить', type=int)
-    
-    
-    # Редактироваение данных 
-    edit_parser = subparser.add_parser('edit', help='Изменение задачи')
-    edit_parser.add_argument('-id', help='Айди задачи, которую нужно изменить')
-    manager = TaskManager()
-
-    args = parser.parse_args(command_line)
-
-    if args.debug:
-        print("debug" + str(args))
-
-    if args.command == "list":
-        if args.id:
-            # manager.get_task_by_id(args.id)
-            manager.get_task_by_id(args.id)
-        elif args.category:
-            manager.get_tasks_by_category(args.category)
-        else:
-            manager.list_tasks()
-        
-    if args.command == "add":
-        if args.title:
-            manager.add_task(
-                title=args.title,
-                description=args.description,
-                category=args.category,
-                due_date=args.deadline,
-                priority=args.priority,
-                status=args.status,
-            )
-        else:
-            print('Для создания задачи небходимо указать "--title"')
-    
-    if args.command == 'complete':
-        if args.id:
-            manager.complete_task_by_id(args.id)
-        else:
-            print('Необходимо указать ID задачи, которую нужно завершить.')
-
-if __name__ == "__main__":
-    main()
+            print(f"Задача с ID {task_id} не найдена.")
