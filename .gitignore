@@ -1,2 +1,4 @@
 task.pdf
 __pycache__
+.venv
+.pytest_cache 
