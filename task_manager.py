@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime, timedelta
 from task import Task
-from utils import pretty_print
+import utils
 
 
 class TaskManager:
@@ -46,7 +46,7 @@ class TaskManager:
                         task.status,
                     ]
                 )
-            pretty_print(data)
+            utils.pretty_print(data)
         else:
             print([])
 
@@ -124,7 +124,7 @@ class TaskManager:
                         task.status,
                     ]
                 )
-                pretty_print(data)
+                utils.pretty_print(data)
                 return
         print(f"Задача с ID{task_id} не найдена.")
 
@@ -156,9 +156,14 @@ class TaskManager:
         if len(data) == 0:
             print("Ничего не найдено.")
             return
-        pretty_print(data)
+        utils.pretty_print(data)
 
     def complete_task_by_id(self, task_id):
+        """Выполнить задачу
+
+        Args:
+            task_id (_type_): Айди задачи, которая будет выполнена.
+        """
         data = [
             [
                 "ID",
@@ -187,9 +192,38 @@ class TaskManager:
                             task.status,
                         ]
                     )
-                    pretty_print(data)
+                    utils.pretty_print(data)
                     return
                 print("Задача уже выполнена.")
                 return
         if len(data) == 1:
             print(f"Задача с ID {task_id} не найдена.")
+
+
+    def edit_task(self, task_id:int):
+        """Изменение задачи
+
+        Args:
+            task_id (_type_): Айди задачи, которая будет изменена
+        """
+        for task in self.tasks:
+            if task.task_id == task_id:
+                user_choice = input("""Что изменяем? 
+1 - Название
+2 - Описание
+3 - Дедлайн
+4 - Категория
+5 - Приоритет
+6 - Статус выполнения
+7 - Всю задачу
+8 - Отмена
+Введите: """)
+                task = utils.answer_user_edit_info(task,int(user_choice))
+                if task is not None:
+                    self.save_tasks()
+                    print(f"Задача '{task.title}' успешно изменена.")
+                    return
+                else:
+                    return
+            
+        print(f'Задача с ID {task_id} не найдена.')

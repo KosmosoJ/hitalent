@@ -1,5 +1,5 @@
 import argparse
-from .task_manager import TaskManager
+from task_manager import TaskManager
 
 
 def main(command_line=None):
@@ -63,7 +63,7 @@ def main(command_line=None):
     
     # Редактироваение данных 
     edit_parser = subparser.add_parser('edit', help='Изменение задачи')
-    edit_parser.add_argument('-id', help='Айди задачи, которую нужно изменить')
+    edit_parser.add_argument('-id', type=int, help='Айди задачи, которую нужно изменить')
     manager = TaskManager()
 
     args = parser.parse_args(command_line)
@@ -91,6 +91,9 @@ def main(command_line=None):
             )
         else:
             print('Для создания задачи небходимо указать "--title"')
+            
+    if args.command == 'edit':
+        manager.edit_task(args.id)
     
     if args.command == 'complete':
         if args.id:
