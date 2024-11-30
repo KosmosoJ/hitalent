@@ -19,8 +19,13 @@ def pretty_print(data):
 
 def answer_user_edit_info(task: Task, user_choice: int):
     if user_choice == 1:  # Название
-        task.title = input("Введите новое название: ")
-        return task
+        title = input("Введите новое название: ")
+        if len(title) > 0:
+            task.title = title
+            return task
+        else:
+            print('Название обязательно к заполнению.')
+            return
         
     elif user_choice == 2:  # Описание
         task.description = input("Введите новое описание: ")
@@ -60,6 +65,11 @@ def answer_user_edit_info(task: Task, user_choice: int):
 
     elif user_choice == 7:  # Вся
         title = input("Введите новое название: ")
+        
+        if len(title) == 0:
+            print('Название обязательно к заполнению.')
+            return
+        
         description = input("Введите новое описание: ")
         due_date = input("Введите новый дедлайн год-месяц-день: ")
         
