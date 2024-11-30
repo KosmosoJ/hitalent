@@ -57,13 +57,10 @@ def main(command_line=None):
     complete_parser = subparser.add_parser('complete', help='Завершить задачу')
     complete_parser.add_argument('-id', help='Айди задачи, которую нужно завершить', type=int)
     
-    check_parser = subparser.add_parser('check', help='Завершить задачу')
-    
-    
-    
     # Редактироваение данных 
     edit_parser = subparser.add_parser('edit', help='Изменение задачи')
     edit_parser.add_argument('-id', type=int, help='Айди задачи, которую нужно изменить')
+    
     manager = TaskManager()
 
     args = parser.parse_args(command_line)
