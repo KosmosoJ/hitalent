@@ -1,5 +1,6 @@
 import argparse
 from task_manager import TaskManager
+from datetime import datetime
 
 
 def main(command_line=None):
@@ -81,17 +82,24 @@ def main(command_line=None):
             manager.list_tasks()
         
     if args.command == "add":
-        if args.title:
-            manager.add_task(
-                title=args.title,
-                description=args.description,
-                category=args.category,
-                due_date=args.deadline,
-                priority=args.priority,
-                status=args.status,
-            )
-        else:
-            print('Для создания задачи небходимо указать "--title"')
+        try:
+            if bool(datetime.strptime(args.deadline, '%Y-%m-%d')):
+                
+                if args.title:
+                    manager.add_task(
+                        title=args.title,
+                        description=args.description,
+                        category=args.category,
+                        due_date=args.deadline,
+                        priority=args.priority,
+                        status=args.status,
+                    )
+                else:
+                    print('Для создания задачи небходимо указать "--title"')
+        except ValueError:
+            print('Дату необходимо указывать в формате год-месяц-день')
+        
+        
             
     if args.command == 'edit':
         if args.id:
