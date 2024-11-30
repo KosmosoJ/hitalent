@@ -61,6 +61,10 @@ def main(command_line=None):
     edit_parser = subparser.add_parser('edit', help='Изменение задачи')
     edit_parser.add_argument('-id', type=int, help='Айди задачи, которую нужно изменить')
     
+    # Удаление задачи
+    delete_parser = subparser.add_parser('del', help='Удалить задачу')
+    delete_parser.add_argument('-id', type=int, help='Айди задачи, которую нужно удалить ')
+    
     manager = TaskManager()
 
     args = parser.parse_args(command_line)
@@ -90,8 +94,13 @@ def main(command_line=None):
             print('Для создания задачи небходимо указать "--title"')
             
     if args.command == 'edit':
-        manager.edit_task(args.id)
-    
+        if args.id:
+            manager.edit_task(args.id)
+        
+    if args.command == 'del':
+        if args.id:
+            manager.delete_task(args.id)
+        
     if args.command == 'complete':
         if args.id:
             manager.complete_task_by_id(args.id)
